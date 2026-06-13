@@ -1,28 +1,27 @@
 package com.ninjaone.dundie_awards.controller;
 
-import com.ninjaone.dundie_awards.repository.ActivityRepository;
-import com.ninjaone.dundie_awards.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import com.ninjaone.dundie_awards.service.ActivityService;
+import com.ninjaone.dundie_awards.service.EmployeeService;
+import lombok.NonNull;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
+@org.springframework.stereotype.Controller
+public class IndexController extends Controller {
+    private final EmployeeService employeeService;
+    private final ActivityService activityService;
 
-@Controller
-@RequestMapping("/")
-public class IndexController {
+    public IndexController(@NonNull EmployeeService employeeService,
+                           @NonNull ActivityService activityService) {
+        this.employeeService = employeeService;
+        this.activityService = activityService;
+    }
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
-    private ActivityRepository activityRepository;
-
-    @GetMapping()
+    @GetMapping("")
     public String getIndex(Model model) {
-        model.addAttribute("employees", employeeRepository.findAll());
-        model.addAttribute("activities", activityRepository.findAll());
+        model.addAttribute("employees", employeeService.findAll(PageRequest.of(0, MAX_PAGE_SIZE)));
+        model.addAttribute("activities", activityService.findAll(PageRequest.of(0, MAX_PAGE_SIZE)));
         return "index";
     }
 }

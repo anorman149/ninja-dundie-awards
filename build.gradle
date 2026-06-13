@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.0'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.4.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.avast.gradle.docker-compose' version '0.17.12'
 }
 
 group = 'com.ninjaone'
@@ -15,15 +16,96 @@ repositories {
 	mavenCentral()
 }
 
+sourceSets {
+	itest {
+		java.srcDir 'src/itest/java'
+		resources.srcDir 'src/itest/resources'
+		compileClasspath += sourceSets.main.output + sourceSets.test.output
+		runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+	}
+}
+
+configurations {
+	itestImplementation.extendsFrom implementation
+	itestRuntimeOnly.extendsFrom runtimeOnly
+	itestImplementation.extendsFrom testImplementation
+	itestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+springBoot {
+	mainClass = 'com.ninjaone.dundie_awards.DundieAwardsApplication'
+	buildInfo()
+}
+
 dependencies {
+	//Spring
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.h2database:h2'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	//JWT
+	itestImplementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	itestRuntimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	itestRuntimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+	//Metrics
+	implementation 'io.micrometer:micrometer-core'
+	implementation 'io.micrometer:context-propagation'
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	//Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.36'
+	annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+	//Database
+	implementation 'org.postgresql:postgresql'
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'net.lbruun.springboot:preliquibase-spring-boot-starter:1.6.1'
+	implementation 'org.hibernate.orm:hibernate-envers'
+
+	//Mapping
+	implementation 'org.mapstruct:mapstruct:1.6.3'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+	//Cache
+	implementation 'com.github.ben-manes.caffeine:caffeine'
+	implementation 'javax.cache:cache-api'
+	implementation 'org.ehcache:ehcache'
+
+	//Logging
+	implementation 'org.slf4j:slf4j-api'
+
+	//Test
+	itestImplementation 'org.springframework.boot:spring-boot-starter-test'
+	itestImplementation 'org.springframework.security:spring-security-test'
 }
 
-tasks.named('test') {
+tasks.register('itest', Test) {
+	description = 'Runs integration tests against live Docker Compose services.'
+	group = 'verification'
+	testClassesDirs = sourceSets.itest.output.classesDirs
+	classpath = sourceSets.itest.runtimeClasspath
+	shouldRunAfter test
 	useJUnitPlatform()
+}
+
+check.dependsOn itest
+
+dockerCompose {
+	projectName = 'dundie-test'
+	useComposeFiles = ['docker-compose.yml']
+	waitForTcpPorts = false
+}
+
+afterEvaluate {
+	def itestTask = tasks.findByName('itest')
+	if (itestTask) {
+		rootProject.dockerCompose.isRequiredBy(itestTask)
+	}
 }

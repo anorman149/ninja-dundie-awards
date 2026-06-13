@@ -1,0 +1,115 @@
+logging:
+  level:
+    root: error
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level %magenta([${spring.application.name},%X{traceId:-},%X{spanId:-}]) %cyan(%logger{36}) - %msg%n"
+
+springdoc:
+  api-docs:
+    path: /openapi
+
+server:
+  port: 3000
+  http2:
+    enabled: true
+
+spring:
+  application:
+    name: dundie_awards
+  threads:
+    virtual:
+      enabled: true # Enable Virtual Threads
+  main:
+    web-application-type: servlet # Default to Non-Reactive
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:keys/local-public.pem
+  cache:
+    type: caffeine
+    jcache:
+      config: classpath:ehcache.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dundie?currentSchema=dundie
+    username: dundie_user
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    drop-first: false
+    liquibase-schema: dundie
+    default-schema: dundie
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: dundie
+        jdbc:
+          time_zone: UTC
+          batch_size: 50
+          default_fetch_size: 50
+          query:
+            in_clause_parameter_padding: true
+        order_inserts: true
+        order_updates: true
+        format_sql: false
+        generate_statistics: false
+        envers:
+          audit_table_suffix: _aud
+          revision_field_name: rev
+          revision_type_field_name: revtype
+          store_data_at_delete: true
+          global_with_modified_flag: false
+  thymeleaf: # Thymeleaf
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/static/
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+      cache:
+        period: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    enabled: true
+    propagation:
+      consume:
+        - w3c
+        - b3
+      produce:
+        - w3c
+
+dundie:
+  cache:
+    caches:
+      - name: employee
+        init-capacity: 10
+        max-capacity: 10000
+        ttl: 10m # 10 Minutes
+      - name: activity
+        init-capacity: 10
+        max-capacity: 10000
+        ttl: 10m # 10 Minutes
+      - name: organization
+        init-capacity: 10
+        max-capacity: 10000
+        ttl: 10m # 10 Minutes

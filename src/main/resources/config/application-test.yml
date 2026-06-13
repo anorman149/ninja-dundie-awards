@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: INFO
+    com.ninjaone.dundie_awards: DEBUG

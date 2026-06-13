@@ -1,7 +1,7 @@
 package com.ninjaone.dundie_awards;
 
-import com.ninjaone.dundie_awards.model.Employee;
-import com.ninjaone.dundie_awards.model.Organization;
+import com.ninjaone.dundie_awards.model.entity.EmployeeEntity;
+import com.ninjaone.dundie_awards.model.entity.OrganizationEntity;
 import com.ninjaone.dundie_awards.repository.EmployeeRepository;
 import com.ninjaone.dundie_awards.repository.OrganizationRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -25,20 +25,24 @@ public class DataLoader implements CommandLineRunner {
         // organizationRepository.deleteAll();
 
         if (employeeRepository.count() == 0) {
-            Organization organizationPikashu = new Organization("Pikashu");
-            organizationRepository.save(organizationPikashu);
+            OrganizationEntity organizationEntityPikashu = OrganizationEntity.builder()
+                    .name("Pikashu")
+                    .build();
 
-            employeeRepository.save(new Employee("John", "Doe", organizationPikashu));
-            employeeRepository.save(new Employee("Jane", "Smith", organizationPikashu));
-            employeeRepository.save(new Employee("Creed", "Braton", organizationPikashu));
+            organizationRepository.save(organizationEntityPikashu);
+            employeeRepository.save(EmployeeEntity.builder().firstName("John").lastName("Doe").organization(organizationEntityPikashu).build());
+            employeeRepository.save(EmployeeEntity.builder().firstName("Jane").lastName("Smith").organization(organizationEntityPikashu).build());
+            employeeRepository.save(EmployeeEntity.builder().firstName("Creed").lastName("Braton").organization(organizationEntityPikashu).build());
 
-            Organization organizationSquanchy = new Organization("Squanchy");
-            organizationRepository.save(organizationSquanchy);
+            OrganizationEntity organizationEntitySquanchy = OrganizationEntity.builder()
+                    .name("Squanchy")
+                    .build();
+            organizationRepository.save(organizationEntitySquanchy);
 
-            employeeRepository.save(new Employee("Michael", "Scott", organizationSquanchy));
-            employeeRepository.save(new Employee("Dwight", "Schrute", organizationSquanchy));
-            employeeRepository.save(new Employee("Jim", "Halpert", organizationSquanchy));
-            employeeRepository.save(new Employee("Pam", "Beesley", organizationSquanchy));
+            employeeRepository.save(EmployeeEntity.builder().firstName("Michael").lastName("Michael").organization(organizationEntitySquanchy).build());
+            employeeRepository.save(EmployeeEntity.builder().firstName("Dwight").lastName("Schrute").organization(organizationEntitySquanchy).build());
+            employeeRepository.save(EmployeeEntity.builder().firstName("Jim").lastName("Halpert").organization(organizationEntitySquanchy).build());
+            employeeRepository.save(EmployeeEntity.builder().firstName("Pam").lastName("Beesley").organization(organizationEntitySquanchy).build());
         }
     }
 }

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-tables
+      author: Adam Davis
+      changes:
+        - sqlFile:
+            path: db/sql/init-tables.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
