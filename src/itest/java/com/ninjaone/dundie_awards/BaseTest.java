@@ -1,6 +1,5 @@
 package com.ninjaone.dundie_awards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,9 +16,6 @@ public abstract class BaseTest {
 
     @Autowired
     TestRestTemplate restTemplate;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     protected HttpHeaders authHeaders() {
         HttpHeaders headers = new HttpHeaders();

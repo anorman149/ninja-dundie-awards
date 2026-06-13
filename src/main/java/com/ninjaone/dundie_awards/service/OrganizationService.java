@@ -37,7 +37,7 @@ public class OrganizationService {
         return page.map(organizationMapper::toDto);
     }
 
-    @Cacheable(value = "organizations", key = "#id")
+    @Cacheable(value = "organizations", key = "#id", unless = "#result == null")
     @Transactional(readOnly = true)
     @Timed(value = "dundie.organization.service.find.id", histogram = true)
     public Organization findById(@NonNull UUID id) {

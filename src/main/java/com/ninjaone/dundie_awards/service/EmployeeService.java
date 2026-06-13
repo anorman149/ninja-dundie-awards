@@ -36,7 +36,7 @@ public class EmployeeService {
         return page.map(employeeMapper::toDto);
     }
 
-    @Cacheable(value = "employees", key = "#id")
+    @Cacheable(value = "employees", key = "#id", unless = "#result == null")
     @Transactional(readOnly = true)
     @Timed(value = "dundie.employee.service.find.id", histogram = true)
     public Employee findById(@NonNull UUID id) {

@@ -36,7 +36,7 @@ public class ActivityService {
         return page.map(activityMapper::toDto);
     }
 
-    @Cacheable(value = "activities", key = "#id")
+    @Cacheable(value = "activities", key = "#id", unless = "#result == null")
     @Transactional(readOnly = true)
     @Timed(value = "dundie.activity.service.find.id", histogram = true)
     public Activity findById(@NonNull UUID id) {

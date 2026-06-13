@@ -18,8 +18,6 @@ repositories {
 
 sourceSets {
 	itest {
-		java.srcDir 'src/itest/java'
-		resources.srcDir 'src/itest/resources'
 		compileClasspath += sourceSets.main.output + sourceSets.test.output
 		runtimeClasspath += sourceSets.main.output + sourceSets.test.output
 	}
@@ -81,9 +79,19 @@ dependencies {
 	//Logging
 	implementation 'org.slf4j:slf4j-api'
 
+	//Swagger-SpringDoc
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
 	//Test
-	itestImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+
 	itestImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
 tasks.register('itest', Test) {

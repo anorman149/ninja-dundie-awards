@@ -26,13 +26,9 @@ Add Docker Compose files
 Add a CI/CD pipeline
 Probably need transactional annotations
 Probably need API versioning
-probably need to combine the Repositories for sharing
 They seem to want OpenAPI, so let's add it
 Abstract the gradle versions away to a properties file or TOML file
-
-
-Add some talking points about allowing the UI to be correctly established and not just an Index file
-
+We can enhance the Spring Doc documentation with annotations on the REST API methods
 
 # Changes
 
