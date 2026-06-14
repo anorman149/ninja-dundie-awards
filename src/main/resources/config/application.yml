@@ -98,15 +98,15 @@ management:
 dundie:
   cache:
     caches:
-      - name: employee
+      - name: employees
         init-capacity: 10
         max-capacity: 10000
         ttl: 10m # 10 Minutes
-      - name: activity
+      - name: activities
         init-capacity: 10
         max-capacity: 10000
         ttl: 10m # 10 Minutes
-      - name: organization
+      - name: organizations
         init-capacity: 10
         max-capacity: 10000
         ttl: 10m # 10 Minutes
