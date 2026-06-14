@@ -3,7 +3,6 @@ package com.ninjaone.dundie_awards.controller;
 import com.ninjaone.dundie_awards.model.api.Employee;
 import com.ninjaone.dundie_awards.model.api.PagedResponse;
 import com.ninjaone.dundie_awards.service.EmployeeService;
-import com.ninjaone.dundie_awards.validator.ValidUUID;
 import io.micrometer.core.annotation.Timed;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -42,7 +41,7 @@ public class EmployeeController extends Controller {
     // get employee by id rest api
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed(value = "dundie.employee.find.id", histogram = true)
-    public ResponseEntity<Employee> findById(@PathVariable @ValidUUID UUID id) {
+    public ResponseEntity<Employee> findById(@PathVariable UUID id) {
         Employee employee = employeeService.findById(id);
         if (employee == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -70,7 +69,7 @@ public class EmployeeController extends Controller {
     // delete employee rest api
     @DeleteMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Timed(value = "dundie.employee.delete", histogram = true)
-    public ResponseEntity<Void> delete(@PathVariable @ValidUUID UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         employeeService.delete(id);
         return ResponseEntity.ok().build();
     }

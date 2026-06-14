@@ -3,7 +3,6 @@ package com.ninjaone.dundie_awards.controller;
 import com.ninjaone.dundie_awards.model.api.Organization;
 import com.ninjaone.dundie_awards.model.api.PagedResponse;
 import com.ninjaone.dundie_awards.service.OrganizationService;
-import com.ninjaone.dundie_awards.validator.ValidUUID;
 import io.micrometer.core.annotation.Timed;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -42,7 +41,7 @@ public class OrganizationController extends Controller {
     // get organization by id rest api
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed(value = "dundie.organization.find.id", histogram = true)
-    public ResponseEntity<Organization> findById(@PathVariable @ValidUUID UUID id) {
+    public ResponseEntity<Organization> findById(@PathVariable UUID id) {
         Organization o = organizationService.findById(id);
         if (o == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -70,7 +69,7 @@ public class OrganizationController extends Controller {
     // delete organization rest api
     @DeleteMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Timed(value = "dundie.organization.delete", histogram = true)
-    public ResponseEntity<Void> delete(@PathVariable @ValidUUID UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         organizationService.delete(id);
         return ResponseEntity.ok().build();
     }
